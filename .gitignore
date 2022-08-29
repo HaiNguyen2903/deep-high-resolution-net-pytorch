@@ -93,3 +93,5 @@ external/
 draws/
 plot/
 
+pretrained_models/
+wandb/

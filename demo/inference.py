@@ -20,7 +20,8 @@ import cv2
 import numpy as np
 
 import sys
-sys.path.append("../lib")
+# sys.path.append("../lib")
+sys.path.append("lib")
 import time
 
 # import _init_paths
@@ -177,9 +178,10 @@ def parse_args():
     # general
     parser.add_argument('--cfg', type=str, required=True)
     parser.add_argument('--videoFile', type=str, required=True)
-    parser.add_argument('--outputDir', type=str, default='/output/')
-    parser.add_argument('--inferenceFps', type=int, default=10)
+    parser.add_argument('--outputDir', type=str, default='output/')
+    parser.add_argument('--inferenceFps', type=int, default=30)
     parser.add_argument('--writeBoxFrames', action='store_true')
+    parser.add_argument('--save_csv', action='store_true')
 
     parser.add_argument('opts',
                         help='Modify config options using the command-line',
@@ -240,9 +242,12 @@ def main():
     frame_width = int(vidcap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     outcap = cv2.VideoWriter('{}/{}_pose.avi'.format(args.outputDir, os.path.splitext(os.path.basename(args.videoFile))[0]),
-                             cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), int(skip_frame_cnt), (frame_width, frame_height))
+                             cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), args.inferenceFps, (frame_width, frame_height))
+    # outcap = cv2.VideoWriter('{}/{}_pose.mp4'.format(args.outputDir, os.path.splitext(os.path.basename(args.videoFile))[0]),
+    #                          cv2.VideoWriter_fourcc(*'mp4v'), args.inferenceFps, (frame_width, frame_height))
 
     count = 0
+    index = 0
     while vidcap.isOpened():
         total_now = time.time()
         ret, image_bgr = vidcap.read()
@@ -310,26 +315,32 @@ def main():
         cv2.putText(image_debug, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
                             1, (0, 0, 255), 2, cv2.LINE_AA)
 
-        cv2.imshow("pos", image_debug)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # # cv2.imshow("pos", image_debug)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
 
-        csv_output_rows.append(new_csv_row)
+        # csv_output_rows.append(new_csv_row)
+
         img_file = os.path.join(pose_dir, 'pose_{:08d}.jpg'.format(count))
         cv2.imwrite(img_file, image_debug)
+        print(f"write frame {index}")
+        index += 1
         outcap.write(image_debug)
 
+    print('Finish inference video')
 
-    # write csv
-    csv_headers = ['frame']
-    for keypoint in COCO_KEYPOINT_INDEXES.values():
-        csv_headers.extend([keypoint+'_x', keypoint+'_y'])
+    if args.save_csv:
+        # write csv
+        print('Writing csv file')
+        csv_headers = ['frame']
+        for keypoint in COCO_KEYPOINT_INDEXES.values():
+            csv_headers.extend([keypoint+'_x', keypoint+'_y'])
 
-    csv_output_filename = os.path.join(args.outputDir, 'pose-data.csv')
-    with open(csv_output_filename, 'w', newline='') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(csv_headers)
-        csvwriter.writerows(csv_output_rows)
+        csv_output_filename = os.path.join(args.outputDir, 'pose-data.csv')
+        with open(csv_output_filename, 'w', newline='') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(csv_headers)
+            csvwriter.writerows(csv_output_rows)
 
     vidcap.release()
     outcap.release()
