@@ -1,6 +1,6 @@
 # Additional Manual for custom Training and Inference
 
-<details><summary><h2>Setup Conda Environment and buid neccesary libs</h2></summary>
+<details><summary><h3>Setup Conda Environment and buid neccesary libs</h3></summary>
 
 ```bash
 conda create -n {env_name} python=3.6
@@ -13,7 +13,7 @@ make
 For more information, see the **Author's Quickstart README section**
 </details>
 
-<details><summary><h2>Create data for Training and Inference</h2></summary>
+<details><summary><h3>Create data for Training and Inference</h3></summary>
 The easiest way to add a custom dataset is to format it to COCO format, which should has the following format:
 
 ```bash
@@ -93,7 +93,7 @@ The ```detection_file.json``` is used in case we want to use result of a detecti
 ```
 </details>
 
-<details><summary><h2>Setup config file and dataset</h2></summary>
+<details><summary><h3>Setup config file and dataset</h3></summary>
 
 Define a config file for training and inference in ```experiments/coco/hrnet``` or any where you like. Copy the existed .yaml file and change some neccesary attribute:
 ```bash
@@ -128,7 +128,7 @@ Debug this API if neccessary.
 
 </details>
 
-<details><summary><h2>Train, Test and Inference</h2></summary>
+<details><summary><h3>Train, Test and Inference</h3></summary>
 
 Train script:
 ```bash
