@@ -126,6 +126,8 @@ Note that it can have error in the ```_load_coco_keypoint_annotation_kernal``` f
 
 Debug this API if neccessary.
 
+</details>
+
 <details><summary><h2>Train, Test and Inference</h2></summary>
 
 Train script:
