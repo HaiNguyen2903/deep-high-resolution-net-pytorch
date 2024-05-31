@@ -1,4 +1,4 @@
-# Additional Manual for custom Training and Inference
+# Tutorial for Training, Testing and Inference
 
 <details><summary><h3>Setup Conda Environment and buid neccesary libs</h3></summary>
 
